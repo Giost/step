@@ -7,3 +7,16 @@
 #greeting-container {
   margin-top: 20px;
 }
+
+.title h2 {
+    border-bottom-style: solid;
+}
+
+.title {
+    cursor: pointer;
+    background: #efefef;
+}
+
+.title:hover {
+  background: #ddd;
+}
