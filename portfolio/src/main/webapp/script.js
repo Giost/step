@@ -15,13 +15,18 @@
 /**
  * Show/hide the description inside the element which has title as id.
  */
-function toggleContent(title) {
-  var descr = document.getElementById(title).getElementsByClassName("description");
-  if (descr && descr.length>0) {
-    if (descr[0].style.display === "none") {
-      descr[0].style.display = "block";
+function toggleContent(sectionId) {
+  if (document.getElementById(sectionId) == null) {
+      return;
+  }
+  const descriptionElement = document.getElementById(sectionId).getElementsByClassName("description");
+  if (descriptionElement && descriptionElement.length>0) {
+    const classes = descriptionElement[0].className.split(" ");
+    if (classes.indexOf("collapsed") === -1) {
+      classes.push("collapsed")
     } else {
-      descr[0].style.display = "none";
+      classes.splice(classes.indexOf("collapsed"), 1);
     }
+    descriptionElement[0].className = classes.join(" ");
   }
 }
