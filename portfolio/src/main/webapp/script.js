@@ -13,20 +13,15 @@
 // limitations under the License.
 
 /**
- * Adds a random greeting to the page.
+ * Show/hide the description inside the element which has title as id.
  */
-function addRandomGreeting() {
-  const greetings = [
-    'I play tennis.',
-    '"An office is a place where dreams come true." — Michael Scott (The Office).',
-    '"A bug is never just a mistake. It represents something bigger. An error of thinking that makes you who you are." - Elliot (Mr Robot).',
-    'I have three dogs and one cat.'
-  ];
-
-  // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
-
-  // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+function toggleContent(title) {
+  var descr = document.getElementById(title).getElementsByClassName("description");
+  if (descr && descr.length>0) {
+    if (descr[0].style.display === "none") {
+      descr[0].style.display = "block";
+    } else {
+      descr[0].style.display = "none";
+    }
+  }
 }

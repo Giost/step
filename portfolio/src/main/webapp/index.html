@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>My Portfolio</title>
+    <title>Stefano's Portfolio</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
@@ -12,7 +12,7 @@
       <img src="/images/selfie.jpg" alt="Stefano's selfie" width="250">
       <p>I am Stefano and I am from Italy.</p>
       <div id="education">
-          <div class="title">
+          <div class="title" onclick="toggleContent('education')">
               <h2>Education</h2>
           </div>
           <div class="description">
@@ -20,7 +20,7 @@
           </div>
       </div>
       <div id="projects">
-          <div class="title">
+          <div class="title" onclick="toggleContent('projects')">
               <h2>Projects</h2>
           </div>
           <div class="description">
@@ -32,7 +32,7 @@
           </div>
       </div>
       <div id="links">
-          <div class="title">
+          <div class="title" onclick="toggleContent('links')">
               <h2>Links</h2>
           </div>
           <div class="description">
@@ -40,9 +40,6 @@
               <h3><a href="https://github.com/Giost">GitHub</a></h3>
           </div>
       </div>
-      <p>Click here to get a random message:</p>
-      <button onclick="addRandomGreeting()">Hello</button>
-      <div id="greeting-container"></div>
     </div>
   </body>
 </html>
