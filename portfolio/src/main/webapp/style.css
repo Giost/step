@@ -20,3 +20,7 @@
 .title:hover {
   background: #ddd;
 }
+
+.collapsed {
+    display: none;
+}
