@@ -41,3 +41,36 @@ function toggleDescription(sectionId) {
   }
   toggleClass(sectionElement, "collapsed");
 }
+
+/**
+ * Change the slide to the current one + n
+*/
+function changeSlide(n, slider) {
+  if (!n || !Number.isInteger(n)) {
+    throw "changeSlide first argument is not an integer.";
+  }
+  let totalSlides = 0;
+  let currentlyDisplayed;
+  for (const elem of slider.children) {
+    const classes = elem.className.split(" ");
+    if (classes.indexOf("slide") !== -1) {
+      if (classes.indexOf("hidden") === -1) {
+        currentlyDisplayed = totalSlides;
+        elem.className += " hidden";
+      }
+      totalSlides++;
+    }
+  }
+  const slideToShow = slider.children[(currentlyDisplayed + n + totalSlides) % totalSlides];
+  slideToShow.className = slideToShow.className.replace("hidden", "").trim();
+}
+
+function previousSlide(previousButton) {
+  // The parentElement of the button is the slider container
+  changeSlide(-1, previousButton.parentElement);
+}
+
+function nextSlide(nextButton) {
+  // The parentElement of the button is the slider container
+  changeSlide(1, nextButton.parentElement);
+}

@@ -9,12 +9,12 @@
 }
 
 .title h2 {
-    border-bottom-style: solid;
+  border-bottom-style: solid;
 }
 
 .title {
-    cursor: pointer;
-    background: #efefef;
+  cursor: pointer;
+  background: #efefef;
 }
 
 .title:hover {
@@ -22,5 +22,30 @@
 }
 
 .section.collapsed > .description {
-    display: none;
+  display: none;
+}
+
+.slider {
+  position: relative;
+  width: 640px;
+}
+
+.slide-image {
+  width: 640px;
+  height: 424px;
+}
+
+.hidden {
+  display: none;
+}
+
+.change {
+  position: absolute;
+  top: 50%;
+  font-size: 22px;
+  padding: 5px;
+}
+
+.next {
+  right: 0;
 }
