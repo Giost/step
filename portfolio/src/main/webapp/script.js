@@ -13,20 +13,28 @@
 // limitations under the License.
 
 /**
- * Show/hide the description inside the element which has title as id.
+* Insert/remove the class in the element.
+*/
+function toggleClass(element, classAttribute) {
+  if (!element || typeof element.className !== "string" || !classAttribute || typeof classAttribute !== "string") {
+    return;
+  }
+  const classes = element.className.split(" ");
+  if (classes.indexOf(classAttribute) === -1) {
+    classes.push(classAttribute);
+  } else {
+    classes.splice(classes.indexOf(classAttribute), 1);
+  }
+  element.className = classes.join(" ");
+}
+
+/**
+ * Show/hide the description inside the section.
  */
-function toggleContent(sectionId) {
-  if (document.getElementById(sectionId) == null) {
-      return;
+function toggleDescription(sectionId) {
+  if (!document.getElementById(sectionId)) {
+    return;
   }
-  const descriptionElement = document.getElementById(sectionId).getElementsByClassName("description");
-  if (descriptionElement && descriptionElement.length>0) {
-    const classes = descriptionElement[0].className.split(" ");
-    if (classes.indexOf("collapsed") === -1) {
-      classes.push("collapsed")
-    } else {
-      classes.splice(classes.indexOf("collapsed"), 1);
-    }
-    descriptionElement[0].className = classes.join(" ");
-  }
+  const sectionElement = document.getElementById(sectionId);
+  toggleClass(sectionElement, "collapsed");
 }
