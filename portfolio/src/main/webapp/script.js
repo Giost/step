@@ -16,7 +16,10 @@
 * Insert/remove the class in the element.
 */
 function toggleClass(element, classAttribute) {
-  if (!element || typeof element.className !== "string" || !classAttribute || typeof classAttribute !== "string") {
+  if (!element || typeof element.className !== "string") {
+    return;
+  }
+  if (!classAttribute || typeof classAttribute !== "string") {
     return;
   }
   const classes = element.className.split(" ");
@@ -32,9 +35,9 @@ function toggleClass(element, classAttribute) {
  * Show/hide the description inside the section.
  */
 function toggleDescription(sectionId) {
-  if (!document.getElementById(sectionId)) {
+  const sectionElement = document.getElementById(sectionId);
+  if (!sectionElement) {
     return;
   }
-  const sectionElement = document.getElementById(sectionId);
   toggleClass(sectionElement, "collapsed");
 }
