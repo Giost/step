@@ -21,6 +21,6 @@
   background: #ddd;
 }
 
-.collapsed {
+.section.collapsed > .description {
     display: none;
 }
