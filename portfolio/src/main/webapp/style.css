@@ -4,8 +4,8 @@
   width: 650px;
 }
 
-#greeting-container {
-  margin-top: 20px;
+.section {
+  background: #efefef;
 }
 
 .title h2 {
@@ -14,7 +14,6 @@
 
 .title {
   cursor: pointer;
-  background: #efefef;
 }
 
 .title:hover {
@@ -27,12 +26,12 @@
 
 .slider {
   position: relative;
-  width: 640px;
+  width: 650px;
 }
 
 .slide-image {
-  width: 640px;
-  height: 424px;
+  width: 650px;
+  height: 430px;
 }
 
 .hidden {
@@ -48,4 +47,8 @@
 
 .next {
   right: 0;
+}
+
+.random {
+  margin-bottom: 5px;
 }
