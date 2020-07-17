@@ -15,12 +15,12 @@
 /**
  * Check the validity of the parameters.
  */
-function check(element, classAttribute, functionName) {
+function check(element, classAttribute) {
   if (!element || !element.classList) {
-    throw new Error(functionName + " first argument is not valid.");
+    throw new Error("The element argument is not valid.");
   }
   if (!classAttribute || typeof classAttribute !== "string") {
-    throw new Error(functionName + " second argument is not a string.");
+    throw new Error("The classAttribute argument is not a string.");
   }
 }
 
