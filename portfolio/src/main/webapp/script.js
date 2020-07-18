@@ -28,7 +28,7 @@ function check(element, classAttribute) {
  * Check if the element has the class.
  */
 function hasClass(element, classAttribute) {
-  check(element, classAttribute, "hasClass");
+  check(element, classAttribute);
   return element.classList.contains(classAttribute);
 }
 
@@ -36,7 +36,7 @@ function hasClass(element, classAttribute) {
  * Add the class in the element.
  */
 function addClass(element, classAttribute) {
-  check(element, classAttribute, "addClass");
+  check(element, classAttribute);
   element.classList.add(classAttribute);
 }
 
@@ -44,7 +44,7 @@ function addClass(element, classAttribute) {
  * Remove the class in the element.
  */
 function removeClass(element, classAttribute) {
-  check(element, classAttribute, "removeClass");
+  check(element, classAttribute);
   element.classList.remove(classAttribute);
 }
 
