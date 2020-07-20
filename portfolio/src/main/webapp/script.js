@@ -127,3 +127,28 @@ function randomSlide(randomButton) {
   const slideToShow = slider.children[Math.floor(Math.random() * totalSlides)];
   removeClass(slideToShow, "hidden");
 }
+
+/**
+ * Fetches comments from the server and adds it to the DOM.
+ */
+function getComments() {
+  const responsePromise = fetch('/data');
+  responsePromise.then(handleResponse);
+}
+
+/**
+ * Handles response by converting it to text and passing the result to
+ * addCommentsToDom().
+ */
+function handleResponse(response) {
+  const textPromise = response.text();
+  textPromise.then(addCommentsToDom);
+}
+
+/** 
+ * Adds comments to the DOM. 
+ */
+function addCommentsToDom(comments) {
+  const commentsContainer = document.getElementById('comments-container');
+  commentsContainer.innerHTML = comments;
+}
