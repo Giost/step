@@ -132,8 +132,13 @@ function randomSlide(randomButton) {
  * Fetches comments from the server and adds it to the DOM.
  */
 function getComments() {
-  const responsePromise = fetch('/data');
-  responsePromise.then(handleResponse);
+  fetch('/data').then((response) => {
+    if (!response.ok) {
+      throw new Error("Response error while fetching data: " + 
+        response.status + " (" + response.statusText + ")");
+    }
+    handleResponse(response);
+  });
 }
 
 /**
@@ -141,8 +146,7 @@ function getComments() {
  * addCommentsToDom().
  */
 function handleResponse(response) {
-  const textPromise = response.text();
-  textPromise.then(addCommentsToDom);
+  response.text().then(addCommentsToDom);
 }
 
 /** 
