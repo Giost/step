@@ -15,18 +15,41 @@
 package com.google.sps.servlets;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
+/** Servlet that returns some example content. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
+  private List<String> comments = new ArrayList<String>(
+    Arrays.asList("Nice!",
+                  "Very interesting.",
+                  "I would like to know more about your favourite TV shows!"));
+
+  /**
+   * Converts a List instance into a JSON string using manual String concatentation.
+   */
+  private String convertListToJson(List<String> list) {
+    StringBuilder jsonBuilder = new StringBuilder();
+    jsonBuilder.append("[");
+    for (int i = 0; i < list.size(); i++) {
+      jsonBuilder.append("\"" + list.get(i) + "\"");
+      if (i < list.size() - 1) {
+        jsonBuilder.append(", ");
+      }
+    }
+    jsonBuilder.append("]");
+    return jsonBuilder.toString();
+  }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html;");
-    response.getWriter().println("<h3>Hello Stefano!</h3>");
+    response.setContentType("application/json;");
+    response.getWriter().println(convertListToJson(comments));
   }
 }

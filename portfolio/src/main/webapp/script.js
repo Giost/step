@@ -139,14 +139,24 @@ function getComments() {
 }
 
 /**
- * Handles response by checking it and converting it to text.
+ * Handles response by checking it and converting it from json.
  */
 function handleResponse(response) {
   if (!response.ok) {
     throw new Error("Response error while fetching data: " + 
      response.status + " (" + response.statusText + ")");
   }
-  return response.text();
+  return response.json();
+}
+
+/**
+ * Creates the div element containing the comment.
+ */
+function createCommentElement(comment) {
+  const commentElement = document.createElement("div");
+  addClass(commentElement, "comment");
+  commentElement.innerText = comment;
+  return commentElement;
 }
 
 /** 
@@ -154,5 +164,8 @@ function handleResponse(response) {
  */
 function addCommentsToDom(comments) {
   const commentsContainer = document.getElementById('comments-container');
-  commentsContainer.innerHTML = comments;
+  commentsContainer.innerHTML = "";
+  for (const comment of comments) {
+    commentsContainer.appendChild(createCommentElement(comment));
+  }
 }
