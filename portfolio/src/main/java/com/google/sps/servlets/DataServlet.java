@@ -22,19 +22,20 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 
 /** Servlet that returns some example content. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  private List<String> comments = new ArrayList<String>(
+  private List<String> comments = new ArrayList<>(
     Arrays.asList("Nice!",
                   "Very interesting.",
                   "I would like to know more about your favourite TV shows!"));
 
   /**
-   * Converts a List instance into a JSON string using manual String concatentation.
+   * Converts a List instance into a JSON string.
    */
-  private String convertListToJson(List<String> list) {
+  public static String convertListToJson(List<String> list) {
     StringBuilder jsonBuilder = new StringBuilder();
     jsonBuilder.append("[");
     for (int i = 0; i < list.size(); i++) {
@@ -49,7 +50,7 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("application/json;");
+    response.setContentType(MediaType.APPLICATION_JSON);
     response.getWriter().println(convertListToJson(comments));
   }
 }
