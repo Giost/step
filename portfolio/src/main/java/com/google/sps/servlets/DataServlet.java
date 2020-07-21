@@ -18,7 +18,7 @@ import com.google.sps.data.Comment;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.Deque;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 import java.util.Date;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -29,14 +29,20 @@ import javax.ws.rs.core.MediaType;
 /** Servlet that returns some example content. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  private final Deque<Comment> comments = new LinkedList<>();
+  private final Deque<Comment> comments = new ArrayDeque<>();
+
+  public DataServlet() {
+    // adds sample comments
+    comments.addFirst(new Comment("Loris", "Nice!", new Date()));
+    comments.addFirst(new Comment("Mark", "Very interesting.", new Date()));
+  }
 
   /**
    * Converts a Deque instance into a JSON string.
    */
-  public static String convertDequeToJson(Deque<Comment> deque) {
+  private String convertDequeToJson(Deque<Comment> comments) {
     Gson gson = new Gson();
-    String json = gson.toJson(deque);
+    String json = gson.toJson(comments);
     return json;
   }
 
@@ -50,7 +56,7 @@ public class DataServlet extends HttpServlet {
    * @return the request parameter, or the default value if the parameter
    *         was not specified by the client
    */
-  public static String getParameter(HttpServletRequest request, String name, String defaultValue) {
+  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
     String value = request.getParameter(name);
     if (value == null || value.isEmpty()) {
       return defaultValue;
@@ -62,10 +68,14 @@ public class DataServlet extends HttpServlet {
    * Saves the comment inserted in the form.
    */
   private void addComment(HttpServletRequest request) {
-    comments.addFirst(
-      new Comment(getParameter(request, "author", "Anonymous"),
-                  getParameter(request, "comment-content", ""),
-                  new Date()));
+    String commentContent = getParameter(request, "comment-content", "");
+    // doesn't insert empty comment
+    if (!commentContent.isEmpty()) {
+      comments.addFirst(
+        new Comment(getParameter(request, "author", "Anonymous"),
+                    commentContent,
+                    new Date()));
+    }
   }
 
   @Override

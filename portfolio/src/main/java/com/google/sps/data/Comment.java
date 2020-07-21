@@ -27,4 +27,16 @@ public class Comment {
     this.commentContent = commentContent;
     this.date = date;
   }
+
+  public String getAuthor() {
+    return author;
+  }
+
+  public String getCommentContent() {
+    return commentContent;
+  }
+
+  public Date getDate() {
+    return date;
+  }
 }
