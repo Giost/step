@@ -14,10 +14,12 @@
 
 package com.google.sps.servlets;
 
+import com.google.sps.data.Comment;
+import com.google.gson.Gson;
 import java.io.IOException;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Date;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,30 +29,48 @@ import javax.ws.rs.core.MediaType;
 /** Servlet that returns some example content. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  private List<String> comments = new ArrayList<>(
-    Arrays.asList("Nice!",
-                  "Very interesting.",
-                  "I would like to know more about your favourite TV shows!"));
+  private final Deque<Comment> comments = new LinkedList<>();
 
   /**
-   * Converts a List instance into a JSON string.
+   * Converts a Deque instance into a JSON string.
    */
-  public static String convertListToJson(List<String> list) {
-    StringBuilder jsonBuilder = new StringBuilder();
-    jsonBuilder.append("[");
-    for (int i = 0; i < list.size(); i++) {
-      jsonBuilder.append("\"" + list.get(i) + "\"");
-      if (i < list.size() - 1) {
-        jsonBuilder.append(", ");
-      }
-    }
-    jsonBuilder.append("]");
-    return jsonBuilder.toString();
+  public static String convertDequeToJson(Deque<Comment> deque) {
+    Gson gson = new Gson();
+    String json = gson.toJson(deque);
+    return json;
   }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType(MediaType.APPLICATION_JSON);
-    response.getWriter().println(convertListToJson(comments));
+    response.getWriter().println(convertDequeToJson(comments));
+  }
+
+  /**
+   * @return the request parameter, or the default value if the parameter
+   *         was not specified by the client
+   */
+  public static String getParameter(HttpServletRequest request, String name, String defaultValue) {
+    String value = request.getParameter(name);
+    if (value == null || value.isEmpty()) {
+      return defaultValue;
+    }
+    return value;
+  }
+
+  /**
+   * Saves the comment inserted in the form.
+   */
+  private void addComment(HttpServletRequest request) {
+    comments.addFirst(
+      new Comment(getParameter(request, "author", "Anonymous"),
+                  getParameter(request, "comment-content", ""),
+                  new Date()));
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    addComment(request);
+    response.sendRedirect("/index.html");
   }
 }
