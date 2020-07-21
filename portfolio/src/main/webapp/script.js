@@ -163,7 +163,6 @@ function createDOMElement(type, classAttribute) {
  */
 function createCommentElement(comment) {
   const commentElement = createDOMElement("div", "comment");
-  commentElement.innerHTML = "";
 
   const dateElement = createDOMElement("div", "date");
   dateElement.innerText = comment.date;
