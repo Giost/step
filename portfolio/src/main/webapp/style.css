@@ -57,3 +57,11 @@
   background: white;
   margin: 5px;
 }
+
+.date {
+  font-style: italic;
+}
+
+.author-name {
+  font-weight: bold;
+}

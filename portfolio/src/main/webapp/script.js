@@ -150,12 +150,33 @@ function handleResponse(response) {
 }
 
 /**
+ * Creates a DOM element of the given type and adds the class to it.
+ */
+function createDOMElement(type, classAttribute) {
+  const element = document.createElement(type);
+  addClass(element, classAttribute);
+  return element;
+}
+
+/**
  * Creates the div element containing the comment.
  */
 function createCommentElement(comment) {
-  const commentElement = document.createElement("div");
-  addClass(commentElement, "comment");
-  commentElement.innerText = comment;
+  const commentElement = createDOMElement("div", "comment");
+  commentElement.innerHTML = "";
+
+  const dateElement = createDOMElement("div", "date");
+  dateElement.innerText = comment.date;
+  commentElement.appendChild(dateElement);
+
+  const authorElement = createDOMElement("span", "author-name");
+  authorElement.innerText = comment.author + ": ";
+  commentElement.appendChild(authorElement);
+
+  const commentTextElement = createDOMElement("span", "comment-text");
+  commentTextElement.innerText = comment.commentContent;
+  commentElement.appendChild(commentTextElement);
+
   return commentElement;
 }
 
