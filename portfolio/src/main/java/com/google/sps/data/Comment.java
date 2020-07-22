@@ -14,18 +14,30 @@
 
 package com.google.sps.data;
 
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 import java.util.Date;
 
 /** Class representing a comment. */
+@Entity
 public class Comment {
-  private final String author;
-  private final String commentContent;
-  private final Date date;
+  @Id private Long id;
+  private String author;
+  private String commentContent;
+  @Index private Date date;
 
   public Comment(String author, String commentContent, Date date) {
     this.author = author;
     this.commentContent = commentContent;
     this.date = date;
+  }
+
+  public Comment() {
+  }
+
+  public Long getId() {
+    return id;
   }
 
   public String getAuthor() {
