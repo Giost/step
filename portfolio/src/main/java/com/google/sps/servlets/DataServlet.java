@@ -14,11 +14,13 @@
 
 package com.google.sps.servlets;
 
+import static com.googlecode.objectify.ObjectifyService.ofy;
+
 import com.google.sps.data.Comment;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.IOException;
-import java.util.Deque;
-import java.util.ArrayDeque;
+import java.util.List;
 import java.util.Date;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -26,22 +28,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
-/** Servlet that returns some example content. */
+/** Servlet that returns and saves the comments. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  private final Deque<Comment> comments = new ArrayDeque<>();
-
-  public DataServlet() {
-    // adds sample comments
-    comments.addFirst(new Comment("Loris", "Nice!", new Date()));
-    comments.addFirst(new Comment("Mark", "Very interesting.", new Date()));
-  }
-
   /**
-   * Converts a Deque instance into a JSON string.
+   * Converts a List instance into a JSON string.
    */
-  private String convertDequeToJson(Deque<Comment> comments) {
-    Gson gson = new Gson();
+  private String convertListToJson(List<Comment> comments) {
+    Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy HH:mm z").create();
     String json = gson.toJson(comments);
     return json;
   }
@@ -49,7 +43,11 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType(MediaType.APPLICATION_JSON);
-    response.getWriter().println(convertDequeToJson(comments));
+    response.getWriter().println(
+      convertListToJson(
+        ofy().load().type(Comment.class).order("-date").list()
+      )
+    );
   }
 
   /**
@@ -71,10 +69,11 @@ public class DataServlet extends HttpServlet {
     String commentContent = getParameter(request, "comment-content", "");
     // doesn't insert empty comment
     if (!commentContent.isEmpty()) {
-      comments.addFirst(
+      ofy().save().entity(
         new Comment(getParameter(request, "author", "Anonymous"),
                     commentContent,
-                    new Date()));
+                    new Date())
+      ).now();
     }
   }
 
