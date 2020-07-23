@@ -17,6 +17,8 @@ package com.google.sps.filters;
 import javax.servlet.annotation.WebFilter;
 import com.googlecode.objectify.ObjectifyFilter;
 
-/** Filter needed by objectify. */
+/** Filter needed by objectify in order to clean up any thread-local transaction
+ *  contexts and pending asynchronous operations that remain at the end of a request. 
+ */
 @WebFilter(urlPatterns = {"/*"})
 public class ObjectifyWebFilter extends ObjectifyFilter {}
