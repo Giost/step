@@ -31,6 +31,8 @@ import javax.ws.rs.core.MediaType;
 /** Servlet that returns and saves the comments. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
+  public static final int DEFAULT_COMMENT_LIMIT = 5;
+
   /**
    * Converts a List instance into a JSON string.
    */
@@ -42,17 +44,10 @@ public class DataServlet extends HttpServlet {
 
   /**
    * Return the value of the limit parameter if valid, 
-   * otherwise the default value which is 5
+   * otherwise the default value.
    */
   private int getLimit(HttpServletRequest request) {
-    int limit;
-    try {
-      limit = Integer.parseInt(getParameter(request, "limit", ""));
-    } catch (Exception e) {
-      // if there is an error, returns the default value (5)
-      limit = 5;
-    }
-    return limit;
+    return getIntParameter(request, "limit", DEFAULT_COMMENT_LIMIT);
   }
 
   @Override
@@ -75,6 +70,21 @@ public class DataServlet extends HttpServlet {
       return defaultValue;
     }
     return value;
+  }
+
+  /**
+   * @return the integer value of the request parameter, or the default value if the parameter
+   *         was not specified by the client or invalid
+   */
+  private int getIntParameter(HttpServletRequest request, String name, int defaultValue) {
+    int parameter;
+    try {
+      parameter = Integer.parseInt(request.getParameter(name));
+    } catch (Exception e) {
+      // if there is an error, returns the default value
+      parameter = defaultValue;
+    }
+    return parameter;
   }
 
   /**

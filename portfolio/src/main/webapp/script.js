@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+const DEFAULT_COMMENT_LIMIT = 5;
+
 /**
  * Check the validity of the parameters.
  */
@@ -146,8 +148,8 @@ function getComments() {
 function getCommentsLimit() {
   let limit = parseInt(document.getElementById("comment-limit").value);
   if (isNaN(limit)) {
-    // if the limit is not valid, set it to the default value of 5
-    limit = 5;
+    // if the limit is not valid, set it to the default value
+    limit = DEFAULT_COMMENT_LIMIT;
   }
   return limit;
 }
