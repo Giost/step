@@ -81,6 +81,15 @@
               <h2>Comments</h2>
           </div>
           <div class="description">
+              <div class="comment-view">
+                <label for="comment-limit">Select the number of comments to show: </label>
+                <select name="comment-limit" id="comment-limit" onchange="getComments()">
+                  <option>5</option>
+                  <option>10</option>
+                  <option>15</option>
+                  <option>20</option>
+                </select>
+              </div>
               <div id="comments-container"></div>
               <div class="comment-form">
                 <form action="/data" method="POST">

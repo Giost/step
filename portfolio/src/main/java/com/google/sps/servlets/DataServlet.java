@@ -40,12 +40,27 @@ public class DataServlet extends HttpServlet {
     return json;
   }
 
+  /**
+   * Return the value of the limit parameter if valid, 
+   * otherwise the default value which is 5
+   */
+  private int getLimit(HttpServletRequest request) {
+    int limit;
+    try {
+      limit = Integer.parseInt(getParameter(request, "limit", ""));
+    } catch (Exception e) {
+      // if there is an error, returns the default value (5)
+      limit = 5;
+    }
+    return limit;
+  }
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType(MediaType.APPLICATION_JSON);
     response.getWriter().println(
       convertListToJson(
-        CommentsStore.load()
+        CommentsStore.load(getLimit(request))
       )
     );
   }

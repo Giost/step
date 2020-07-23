@@ -132,10 +132,24 @@ function randomSlide(randomButton) {
  * Fetches comments from the server and adds it to the DOM.
  */
 function getComments() {
-  fetch('/data')
+  fetch('/data?' + new URLSearchParams({
+     limit : getCommentsLimit(),
+   }))
    .then(handleResponse)
    .then(addCommentsToDom)
    .catch(console.error);
+}
+
+/**
+ * Returns the value selected for the limit of comments to show.
+ */
+function getCommentsLimit() {
+  let limit = parseInt(document.getElementById("comment-limit").value);
+  if (isNaN(limit)) {
+    // if the limit is not valid, set it to the default value of 5
+    limit = 5;
+  }
+  return limit;
 }
 
 /**
