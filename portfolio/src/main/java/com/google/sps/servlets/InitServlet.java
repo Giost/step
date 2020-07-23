@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 import com.googlecode.objectify.ObjectifyService;
 import com.google.sps.data.Comment;
 
-/** Servlet that performs initial operations. */
+/** Servlet that initializes the ObjectifyService. */
 @WebListener
 public class InitServlet implements ServletContextListener {
   private static final Logger log = Logger.getLogger(InitServlet.class.getName());

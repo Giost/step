@@ -14,14 +14,14 @@
 
 package com.google.sps.servlets;
 
-import static com.googlecode.objectify.ObjectifyService.ofy;
-
 import com.google.sps.data.Comment;
+import com.google.sps.data.CommentsData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.util.List;
 import java.util.Date;
+import java.text.DateFormat;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +35,7 @@ public class DataServlet extends HttpServlet {
    * Converts a List instance into a JSON string.
    */
   private String convertListToJson(List<Comment> comments) {
-    Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy HH:mm z").create();
+    Gson gson = new GsonBuilder().setDateFormat(DateFormat.LONG).create();
     String json = gson.toJson(comments);
     return json;
   }
@@ -45,7 +45,7 @@ public class DataServlet extends HttpServlet {
     response.setContentType(MediaType.APPLICATION_JSON);
     response.getWriter().println(
       convertListToJson(
-        ofy().load().type(Comment.class).order("-date").list()
+        CommentsData.load()
       )
     );
   }
@@ -69,11 +69,11 @@ public class DataServlet extends HttpServlet {
     String commentContent = getParameter(request, "comment-content", "");
     // doesn't insert empty comment
     if (!commentContent.isEmpty()) {
-      ofy().save().entity(
+      CommentsData.save(
         new Comment(getParameter(request, "author", "Anonymous"),
                     commentContent,
                     new Date())
-      ).now();
+      );
     }
   }
 
