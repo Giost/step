@@ -15,7 +15,7 @@
 package com.google.sps.servlets;
 
 import com.google.sps.data.Comment;
-import com.google.sps.data.CommentsData;
+import com.google.sps.data.CommentsStore;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
@@ -45,7 +45,7 @@ public class DataServlet extends HttpServlet {
     response.setContentType(MediaType.APPLICATION_JSON);
     response.getWriter().println(
       convertListToJson(
-        CommentsData.load()
+        CommentsStore.load()
       )
     );
   }
@@ -69,7 +69,7 @@ public class DataServlet extends HttpServlet {
     String commentContent = getParameter(request, "comment-content", "");
     // doesn't insert empty comment
     if (!commentContent.isEmpty()) {
-      CommentsData.save(
+      CommentsStore.save(
         new Comment(getParameter(request, "author", "Anonymous"),
                     commentContent,
                     new Date())
