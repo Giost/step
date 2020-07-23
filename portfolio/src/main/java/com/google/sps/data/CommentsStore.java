@@ -20,7 +20,7 @@ import java.util.List;
 import com.google.sps.data.Comment;
 
 /** Class that allows to perform operations to the comments in the database. */
-public class CommentsData {
+public class CommentsStore {
   /**
    * Saves the comment in the database.
    */
