@@ -34,4 +34,11 @@ public class CommentsStore {
   public static List<Comment> load() {
     return ofy().load().type(Comment.class).order("-date").list();
   }
+
+  /**
+   * Loads and returns comments in the database sorted by date and limited in number.
+   */
+  public static List<Comment> load(int limit) {
+    return ofy().load().type(Comment.class).order("-date").limit(limit).list();
+  }
 }
