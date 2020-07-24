@@ -15,7 +15,7 @@
 const DEFAULT_COMMENT_LIMIT = 5;
 
 /**
- * Check the validity of the parameters.
+ * Checks the validity of the parameters.
  */
 function check(element, classAttribute) {
   if (!element || !element.classList) {
@@ -27,7 +27,7 @@ function check(element, classAttribute) {
 }
 
 /**
- * Check if the element has the class.
+ * Checks if the element has the class.
  */
 function hasClass(element, classAttribute) {
   check(element, classAttribute);
@@ -35,7 +35,7 @@ function hasClass(element, classAttribute) {
 }
 
 /**
- * Add the class in the element.
+ * Adds the class in the element.
  */
 function addClass(element, classAttribute) {
   check(element, classAttribute);
@@ -51,7 +51,7 @@ function removeClass(element, classAttribute) {
 }
 
 /**
- * Insert/remove the class in the element.
+ * Inserts/removes the class in the element.
  */
 function toggleClass(element, classAttribute) {
   if (hasClass(element, classAttribute)) {
@@ -62,7 +62,7 @@ function toggleClass(element, classAttribute) {
 }
 
 /**
- * Show/hide the description inside the section.
+ * Shows/hides the description inside the section.
  */
 function toggleDescription(sectionId) {
   const sectionElement = document.getElementById(sectionId);
@@ -73,7 +73,7 @@ function toggleDescription(sectionId) {
 }
 
 /**
- * Hide the currently displayed slide and return the total number of slides
+ * Hides the currently displayed slide and return the total number of slides
  * and the index of the currently displayed.
  */
 function hideAllSlides(slider) {
@@ -92,7 +92,7 @@ function hideAllSlides(slider) {
 }
 
 /**
- * Change the slide to the current one + offset.
+ * Changes the slide to the current one + offset.
  */
 function changeSlide(offset, slider) {
   if (!offset || !Number.isInteger(offset)) {
@@ -104,7 +104,7 @@ function changeSlide(offset, slider) {
 }
 
 /**
- * Change the slide to the previous one.
+ * Changes the slide to the previous one.
  */
 function previousSlide(previousButton) {
   // The parentElement of the button is the slider container
@@ -112,7 +112,7 @@ function previousSlide(previousButton) {
 }
 
 /**
- * Change the slide to the next one.
+ * Changes the slide to the next one.
  */
 function nextSlide(nextButton) {
   // The parentElement of the button is the slider container
@@ -120,7 +120,7 @@ function nextSlide(nextButton) {
 }
 
 /**
- * Show a random slide.
+ * Shows a random slide.
  */
 function randomSlide(randomButton) {
   // The nextElementSibling of the random button is the slider container
@@ -131,38 +131,104 @@ function randomSlide(randomButton) {
 }
 
 /**
- * Fetches comments from the server and adds it to the DOM.
+ * Initializes the comment section.
  */
 function getComments() {
+  fetchTotalPage();
+  fetchComments();
+}
+
+/**
+ * Fetches the total comments pages from the server and adds it to the DOM.
+ */
+function fetchTotalPage() {
+  fetch('/total')
+   .then(handleTextResponse)
+   .then(addTotalToDom)
+   .catch(console.error);
+}
+
+/**
+ * Fetches comments from the server and adds it to the DOM.
+ */
+function fetchComments() {
   fetch('/data?' + new URLSearchParams({
      limit : getCommentsLimit(),
+     offset : getCommentsOffset(),
    }))
-   .then(handleResponse)
+   .then(handleJSONResponse)
    .then(addCommentsToDom)
    .catch(console.error);
+}
+
+/**
+ * Returns the value converted to int if valid and non negative, or the default value
+ */
+function toInt(value, defaultValue) {
+  let intValue = parseInt(value);
+  if (isNaN(intValue) || intValue < 0) {
+    // if the value is not valid, sets it to the default value
+    intValue = defaultValue;
+  }
+  return intValue;
 }
 
 /**
  * Returns the value selected for the limit of comments to show.
  */
 function getCommentsLimit() {
-  let limit = parseInt(document.getElementById("comment-limit").value);
-  if (isNaN(limit)) {
-    // if the limit is not valid, set it to the default value
-    limit = DEFAULT_COMMENT_LIMIT;
+  return toInt(document.getElementById("comment-limit").value, DEFAULT_COMMENT_LIMIT);
+}
+
+/**
+ * Returns the value selected for the limit of comments to show.
+ */
+function getCommentsOffset() {
+  const currentPage = getCurrentPage();
+  return getCommentsLimit() * (currentPage < 1 ? 0 : currentPage - 1);
+}
+
+/**
+ * Handles response by checking it and converting it to text.
+ */
+function handleTextResponse(response) {
+  if (!response.ok) {
+    throw new Error("Response error while fetching data: " + 
+     response.status + " (" + response.statusText + ")");
   }
-  return limit;
+  return response.text();
 }
 
 /**
  * Handles response by checking it and converting it from json.
  */
-function handleResponse(response) {
+function handleJSONResponse(response) {
   if (!response.ok) {
     throw new Error("Response error while fetching data: " + 
      response.status + " (" + response.statusText + ")");
   }
   return response.json();
+}
+
+/** 
+ * Adds total pages to the DOM. 
+ */
+function addTotalToDom(totalComments) {
+  const totalPagesContainer = document.getElementById('total-page');
+  const pages = toInt(totalComments, 0) / getCommentsLimit();
+  totalPagesContainer.innerText = Math.ceil(pages);
+  disablePaginationButtons();
+}
+
+/** 
+ * Adds comments to the DOM. 
+ */
+function addCommentsToDom(comments) {
+  const commentsContainer = document.getElementById('comments-container');
+  commentsContainer.innerHTML = "";
+  for (const comment of comments) {
+    commentsContainer.appendChild(createCommentElement(comment));
+  }
 }
 
 /**
@@ -195,13 +261,81 @@ function createCommentElement(comment) {
   return commentElement;
 }
 
-/** 
- * Adds comments to the DOM. 
+/**
+ * Disables some of the pagination buttons if the current page
+ * is the first or the last one.
  */
-function addCommentsToDom(comments) {
-  const commentsContainer = document.getElementById('comments-container');
-  commentsContainer.innerHTML = "";
-  for (const comment of comments) {
-    commentsContainer.appendChild(createCommentElement(comment));
+function disablePaginationButtons() {
+  let disable = false;
+  if (getCurrentPage() === 1) {
+    // disables first and previous page button
+    disable = true;
+  }
+  document.getElementById("first-page").disabled = disable;
+  document.getElementById("prev-page").disabled = disable;
+  
+  disable = false;
+  if (getCurrentPage() === getTotalPage()) {
+    // disables last and next page button
+    disable = true;
+  }
+  document.getElementById("last-page").disabled = disable;
+  document.getElementById("next-page").disabled = disable;
+}
+
+/**
+ * Returns the current number of the comments page.
+ */
+function getCurrentPage() {
+  const currentPage = document.getElementById("current-page").textContent;
+  return toInt(currentPage, 0);
+}
+
+/**
+ * Returns the total number of the comments page.
+ */
+function getTotalPage() {
+  const totalPage = document.getElementById("total-page").textContent;
+  return toInt(totalPage, 1);
+}
+
+/** 
+ * Sets the current page.
+ */
+function setPage(page) {
+  document.getElementById("current-page").innerText = page;
+  fetchComments();
+  disablePaginationButtons();
+}
+
+/**
+ * Changes the page to the current one + offset.
+ */
+function changePage(offset) {
+  setPage(getCurrentPage() + offset);
+}
+
+/**
+ * Sets the current page to the last one.
+ */
+function setLastPage() {
+  setPage(getTotalPage());
+}
+
+/**
+ * Updates the comments section when the limit changes.
+ */
+function changeLimit() {
+  setPage(1);
+  getComments();
+}
+
+/**
+ * Sets the current page to the number inserted if it is valid
+ */
+function goToPage() {
+  const page = toInt(document.getElementById("to-page").value, 0);
+  if (page >= 1 && page <= getTotalPage()) {
+    setPage(page);
   }
 }

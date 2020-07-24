@@ -41,4 +41,19 @@ public class CommentsStore {
   public static List<Comment> load(int limit) {
     return ofy().load().type(Comment.class).order("-date").limit(limit).list();
   }
+
+  /**
+   * Loads and returns comments in the database sorted by date starting from the
+   * offset (included) and limited in number.
+   */
+  public static List<Comment> load(int limit, int offset) {
+    return ofy().load().type(Comment.class).order("-date").offset(offset).limit(limit).list();
+  }
+
+  /**
+   * Returns the total number of comments.
+   */
+  public static int totalComments() {
+    return ofy().load().type(Comment.class).count();
+  }
 }

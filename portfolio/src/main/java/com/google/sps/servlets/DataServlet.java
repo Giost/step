@@ -32,6 +32,7 @@ import javax.ws.rs.core.MediaType;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
   public static final int DEFAULT_COMMENT_LIMIT = 5;
+  public static final int DEFAULT_COMMENT_OFFSET = 0;
 
   /**
    * Converts a List instance into a JSON string.
@@ -43,11 +44,21 @@ public class DataServlet extends HttpServlet {
   }
 
   /**
-   * Return the value of the limit parameter if valid, 
+   * Returns the value of the limit parameter if valid, 
    * otherwise the default value.
    */
   private int getLimit(HttpServletRequest request) {
-    return getIntParameter(request, "limit", DEFAULT_COMMENT_LIMIT);
+    int limit = getIntParameter(request, "limit", DEFAULT_COMMENT_LIMIT);
+    return (limit >= 0 ? limit : DEFAULT_COMMENT_LIMIT);
+  }
+
+  /**
+   * Returns the value of the offset parameter if valid, 
+   * otherwise the default value.
+   */
+  private int getOffset(HttpServletRequest request) {
+    int offset = getIntParameter(request, "offset", DEFAULT_COMMENT_OFFSET);
+    return (offset >= 0 ? offset : DEFAULT_COMMENT_OFFSET);
   }
 
   @Override
@@ -55,7 +66,7 @@ public class DataServlet extends HttpServlet {
     response.setContentType(MediaType.APPLICATION_JSON);
     response.getWriter().println(
       convertListToJson(
-        CommentsStore.load(getLimit(request))
+        CommentsStore.load(getLimit(request), getOffset(request))
       )
     );
   }
