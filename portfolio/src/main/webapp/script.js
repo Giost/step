@@ -142,7 +142,7 @@ function getComments() {
  * Fetches the total comments pages from the server and adds it to the DOM.
  */
 function fetchTotalPage() {
-  fetch('/total')
+  fetch('/comments/total')
    .then(handleTextResponse)
    .then(addTotalToDom)
    .catch(console.error);
@@ -152,7 +152,7 @@ function fetchTotalPage() {
  * Fetches comments from the server and adds it to the DOM.
  */
 function fetchComments() {
-  fetch('/data?' + new URLSearchParams({
+  fetch('/comments/data?' + new URLSearchParams({
      limit : getCommentsLimit(),
      offset : getCommentsOffset(),
    }))
@@ -214,9 +214,8 @@ function handleJSONResponse(response) {
  * Adds total pages to the DOM. 
  */
 function addTotalToDom(totalComments) {
-  const totalPagesContainer = document.getElementById('total-page');
   const pages = toInt(totalComments, 0) / getCommentsLimit();
-  totalPagesContainer.innerText = Math.ceil(pages);
+  document.getElementById('total-pages').innerText = Math.ceil(pages);
   disablePaginationButtons();
 }
 
@@ -266,19 +265,11 @@ function createCommentElement(comment) {
  * is the first or the last one.
  */
 function disablePaginationButtons() {
-  let disable = false;
-  if (getCurrentPage() === 1) {
-    // disables first and previous page button
-    disable = true;
-  }
+  let disable = getCurrentPage() === 1;
   document.getElementById("first-page").disabled = disable;
   document.getElementById("prev-page").disabled = disable;
   
-  disable = false;
-  if (getCurrentPage() === getTotalPage()) {
-    // disables last and next page button
-    disable = true;
-  }
+  disable = getCurrentPage() === getTotalPage();
   document.getElementById("last-page").disabled = disable;
   document.getElementById("next-page").disabled = disable;
 }
@@ -295,7 +286,7 @@ function getCurrentPage() {
  * Returns the total number of the comments page.
  */
 function getTotalPage() {
-  const totalPage = document.getElementById("total-page").textContent;
+  const totalPage = document.getElementById("total-pages").textContent;
   return toInt(totalPage, 1);
 }
 
@@ -303,6 +294,9 @@ function getTotalPage() {
  * Sets the current page.
  */
 function setPage(page) {
+  if (page < 1 || page > getTotalPage()) {
+    page = 1;
+  }
   document.getElementById("current-page").innerText = page;
   fetchComments();
   disablePaginationButtons();

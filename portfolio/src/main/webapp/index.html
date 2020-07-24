@@ -91,7 +91,7 @@
                 </select>
                 <button id="first-page" onclick="setPage(1)">First</button>
                 <button id="prev-page" onclick="changePage(-1)">Previous</button>
-                <span id="current-page">1</span> / <span id="total-page"></span>
+                <span id="current-page">1</span> / <span id="total-pages"></span>
                 <button id="next-page" onclick="changePage(1)">Next</button>
                 <button id="last-page" onclick="setLastPage()">Last</button>
                 <label for="to-page">Go to page </label>
@@ -100,7 +100,7 @@
               </div>
               <div id="comments-container"></div>
               <div class="comment-form">
-                <form action="/data" method="POST">
+                <form action="/comments/data" method="POST">
                   <p>Enter a comment:</p>
                   <textarea name="comment-content" required></textarea>
                   <p>Enter your name:</p>

@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
 /** Servlet that returns the total number of comments. */
-@WebServlet("/total")
+@WebServlet("/comments/total")
 public class TotalCommentsServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

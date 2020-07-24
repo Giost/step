@@ -32,14 +32,14 @@ public class CommentsStore {
    * Loads and returns all the comments in the database sorted by date.
    */
   public static List<Comment> load() {
-    return ofy().load().type(Comment.class).order("-date").list();
+    return load(0, 0);
   }
 
   /**
    * Loads and returns comments in the database sorted by date and limited in number.
    */
   public static List<Comment> load(int limit) {
-    return ofy().load().type(Comment.class).order("-date").limit(limit).list();
+    return load(limit, 0);
   }
 
   /**

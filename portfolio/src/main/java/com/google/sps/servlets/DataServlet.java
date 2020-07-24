@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
 /** Servlet that returns and saves the comments. */
-@WebServlet("/data")
+@WebServlet("/comments/data")
 public class DataServlet extends HttpServlet {
   public static final int DEFAULT_COMMENT_LIMIT = 5;
   public static final int DEFAULT_COMMENT_OFFSET = 0;
@@ -48,8 +48,7 @@ public class DataServlet extends HttpServlet {
    * otherwise the default value.
    */
   private int getLimit(HttpServletRequest request) {
-    int limit = getIntParameter(request, "limit", DEFAULT_COMMENT_LIMIT);
-    return (limit >= 0 ? limit : DEFAULT_COMMENT_LIMIT);
+    return getNonNegativeIntParameter(request, "limit", DEFAULT_COMMENT_LIMIT);
   }
 
   /**
@@ -57,8 +56,7 @@ public class DataServlet extends HttpServlet {
    * otherwise the default value.
    */
   private int getOffset(HttpServletRequest request) {
-    int offset = getIntParameter(request, "offset", DEFAULT_COMMENT_OFFSET);
-    return (offset >= 0 ? offset : DEFAULT_COMMENT_OFFSET);
+    return getNonNegativeIntParameter(request, "offset", DEFAULT_COMMENT_OFFSET);
   }
 
   @Override
@@ -96,6 +94,15 @@ public class DataServlet extends HttpServlet {
       parameter = defaultValue;
     }
     return parameter;
+  }
+
+  /**
+   * @return the integer value of the request parameter, or the default value if the parameter
+   *         was not specified by the client or invalid or negative
+   */
+  private int getNonNegativeIntParameter(HttpServletRequest request, String name, int defaultValue) {
+    int parameter = getIntParameter(request, name, defaultValue);
+    return (parameter >= 0 ? parameter : defaultValue);
   }
 
   /**
