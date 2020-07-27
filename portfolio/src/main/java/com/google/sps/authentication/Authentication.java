@@ -21,27 +21,27 @@ public class Authentication {
   /**
    * Returns the user information.
    */
-  public static UserService getUser() {
+  public static UserService getUserService() {
     return UserServiceFactory.getUserService();
   }
   /**
    * Returns true if the user is logged in, false otherwise.
    */
   public static boolean isLoggedIn() {
-    return getUser().isUserLoggedIn();
+    return getUserService().isUserLoggedIn();
   }
 
   /**
    * Returns a login URL that redirects to the index page.
    */
   public static String loginURL() {
-    return getUser().createLoginURL("/index.html");
+    return getUserService().createLoginURL("/index.html");
   }
 
   /**
    * Returns the email address of the current user.
    */
   public static String getEmail() {
-    return getUser().getCurrentUser().getEmail();
+    return getUserService().getCurrentUser().getEmail();
   }
 }
