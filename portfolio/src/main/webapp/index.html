@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body onload="getComments()">
+  <body onload="commentsInit()">
     <div id="content">
       <h1>Stefano's Portfolio</h1>
       <img src="/images/selfie.jpg" alt="Stefano's selfie" width="250">
@@ -99,15 +99,14 @@
                 <button onclick="goToPage()">Go</button>
               </div>
               <div id="comments-container"></div>
-              <div class="comment-form">
-                <form action="/comments/data" method="POST">
+              <div class="comment-form-container">
+                <form id="comment-form" class="hidden" action="/comments/data" method="POST">
                   <p>Enter a comment:</p>
                   <textarea name="comment-content" required></textarea>
-                  <p>Enter your name:</p>
-                  <input type="text" name="author">
                   <br/><br/>
                   <input type="submit" />
                 </form>
+                <a id="login-link">Login to comment</a>
               </div>
           </div>
       </div>
