@@ -184,8 +184,7 @@ function getCommentsLimit() {
  * Returns the value selected for the limit of comments to show.
  */
 function getCommentsOffset() {
-  const currentPage = getCurrentPage();
-  return getCommentsLimit() * (currentPage < 1 ? 0 : currentPage - 1);
+  return getCommentsLimit() * (getCurrentPage() - 1);
 }
 
 /**
@@ -279,7 +278,7 @@ function disablePaginationButtons() {
  */
 function getCurrentPage() {
   const currentPage = document.getElementById("current-page").textContent;
-  return toInt(currentPage, 0);
+  return toInt(currentPage, 1);
 }
 
 /**
