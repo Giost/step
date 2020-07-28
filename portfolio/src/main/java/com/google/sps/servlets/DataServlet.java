@@ -60,12 +60,22 @@ public class DataServlet extends HttpServlet {
     return getNonNegativeIntParameter(request, "offset", DEFAULT_COMMENT_OFFSET);
   }
 
+  /**
+   * Returns the list of comments translated.
+   */
+  private List<Comment> loadAndTranslateComments(HttpServletRequest request) {
+    List<Comment> comments = CommentsStore.load(getLimit(request), getOffset(request));
+    String languageCode = getParameter(request, "language", "en");
+    comments.forEach((comment) -> comment.translate(languageCode));
+    return comments;
+  }
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType(MediaType.APPLICATION_JSON);
     response.getWriter().println(
       convertListToJson(
-        CommentsStore.load(getLimit(request), getOffset(request))
+        loadAndTranslateComments(request)
       )
     );
   }
