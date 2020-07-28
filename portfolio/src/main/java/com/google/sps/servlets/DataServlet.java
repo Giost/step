@@ -16,6 +16,7 @@ package com.google.sps.servlets;
 
 import com.google.sps.data.Comment;
 import com.google.sps.data.CommentsStore;
+import com.google.sps.authentication.Authentication;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
@@ -110,10 +111,10 @@ public class DataServlet extends HttpServlet {
    */
   private void addComment(HttpServletRequest request) {
     String commentContent = getParameter(request, "comment-content", "");
-    // doesn't insert empty comment
-    if (!commentContent.isEmpty()) {
+    // doesn't insert empty comment or unregistered user
+    if (!commentContent.isEmpty() && Authentication.isLoggedIn()) {
       CommentsStore.save(
-        new Comment(getParameter(request, "author", "Anonymous"),
+        new Comment(Authentication.getEmail(),
                     commentContent,
                     new Date())
       );

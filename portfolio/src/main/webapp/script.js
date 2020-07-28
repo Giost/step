@@ -131,7 +131,7 @@ function randomSlide(randomButton) {
 }
 
 /**
- * Initializes the comment section.
+ * Initializes the comments view.
  */
 function getComments() {
   fetchTotalPage();
@@ -331,4 +331,39 @@ function goToPage() {
   if (page >= 1 && page <= getTotalPage()) {
     setPage(page);
   }
+}
+
+/**
+ * Fetches the login status of the user from the server and 
+ * shows/hides the comment form.
+ */
+function fetchLoginStatus() {
+  fetch('/login/status')
+   .then(handleJSONResponse)
+   .then(toggleCommentForm)
+   .catch(console.error);
+}
+
+/**
+ * Shows/hides the comment form and the login link.
+ */
+function toggleCommentForm(loginStatus) {
+  const commentForm = document.getElementById("comment-form");
+  const loginLink = document.getElementById("login-link");
+  if (loginStatus.isLoggedIn) {
+    removeClass(commentForm, "hidden");
+    addClass(loginLink, "hidden");
+  } else {
+    addClass(commentForm, "hidden");
+    loginLink.href = loginStatus.loginURL;
+    removeClass(loginLink, "hidden");
+  }
+}
+
+/**
+ * Initializes the comments section.
+ */
+function commentsInit() {
+  getComments();
+  fetchLoginStatus();
 }
