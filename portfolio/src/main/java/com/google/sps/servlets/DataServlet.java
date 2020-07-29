@@ -17,10 +17,12 @@ package com.google.sps.servlets;
 import com.google.sps.data.Comment;
 import com.google.sps.data.CommentsStore;
 import com.google.sps.authentication.Authentication;
+import com.google.sps.translation.TranslationProvider;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Date;
 import java.text.DateFormat;
 import javax.servlet.annotation.WebServlet;
@@ -32,8 +34,12 @@ import javax.ws.rs.core.MediaType;
 /** Servlet that returns and saves the comments. */
 @WebServlet("/comments/data")
 public class DataServlet extends HttpServlet {
-  public static final int DEFAULT_COMMENT_LIMIT = 5;
-  public static final int DEFAULT_COMMENT_OFFSET = 0;
+  private static final int DEFAULT_COMMENT_LIMIT = 5;
+  private static final int DEFAULT_COMMENT_OFFSET = 0;
+  private static final String PARAM_LIMIT = "limit";
+  private static final String PARAM_OFFSET = "offset";
+  private static final String PARAM_LANGUAGE = "language";
+  private TranslationProvider translationProvider = new TranslationProvider();
 
   /**
    * Converts a List instance into a JSON string.
@@ -49,7 +55,7 @@ public class DataServlet extends HttpServlet {
    * otherwise the default value.
    */
   private int getLimit(HttpServletRequest request) {
-    return getNonNegativeIntParameter(request, "limit", DEFAULT_COMMENT_LIMIT);
+    return getNonNegativeIntParameter(request, PARAM_LIMIT, DEFAULT_COMMENT_LIMIT);
   }
 
   /**
@@ -57,27 +63,38 @@ public class DataServlet extends HttpServlet {
    * otherwise the default value.
    */
   private int getOffset(HttpServletRequest request) {
-    return getNonNegativeIntParameter(request, "offset", DEFAULT_COMMENT_OFFSET);
+    return getNonNegativeIntParameter(request, PARAM_OFFSET, DEFAULT_COMMENT_OFFSET);
+  }
+
+  /**
+   * Returns the value of the language parameter if valid, 
+   * otherwise the default value.
+   */
+  private String getLanguage(HttpServletRequest request) {
+    return getParameter(request, PARAM_LANGUAGE, TranslationProvider.DEFAULT_TARGET_LANGUAGE);
   }
 
   /**
    * Returns the list of comments translated.
    */
-  private List<Comment> loadAndTranslateComments(HttpServletRequest request) {
-    List<Comment> comments = CommentsStore.load(getLimit(request), getOffset(request));
-    String languageCode = getParameter(request, "language", "en");
-    comments.forEach((comment) -> comment.translate(languageCode));
-    return comments;
+  private List<Comment> translateComments(List<Comment> comments, String languageCode) {
+    List<Comment> translatedComments = new ArrayList<>();
+    for (Comment comment : comments) {
+      translatedComments.add(
+        translationProvider.translateComment(comment, languageCode)
+      );
+    }
+    return translatedComments;
   }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    List<Comment> comments = CommentsStore.load(getLimit(request), getOffset(request));
+    List<Comment> translatedComments = translateComments(comments, getLanguage(request));
+    String json = convertListToJson(translatedComments);
+
     response.setContentType(MediaType.APPLICATION_JSON);
-    response.getWriter().println(
-      convertListToJson(
-        loadAndTranslateComments(request)
-      )
-    );
+    response.getWriter().println(json);
   }
 
   /**

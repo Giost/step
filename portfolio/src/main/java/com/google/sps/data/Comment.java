@@ -18,7 +18,6 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 import java.util.Date;
-import com.google.sps.translation.TranslationProvider;
 
 /** Class representing a comment. */
 @Entity
@@ -51,12 +50,5 @@ public class Comment {
 
   public Date getDate() {
     return date;
-  }
-
-  /**
-   * Translates the comment content in the language specified.
-   */
-  public void translate(String languageCode) {
-    commentContent = TranslationProvider.translate(commentContent, languageCode);
   }
 }

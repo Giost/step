@@ -28,6 +28,7 @@ public class InitServlet implements ServletContextListener {
 
   @Override
   public void contextInitialized(ServletContextEvent servletContextEvent) {
+    ObjectifyService.init();
     ObjectifyService.register(Comment.class);
     log.info("Comment class registered in objectify");
   }
