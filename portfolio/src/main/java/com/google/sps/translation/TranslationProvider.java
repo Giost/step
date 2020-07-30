@@ -31,10 +31,11 @@ public class TranslationProvider {
   private Set<String> supportedLanguageCodes;
 
   public TranslationProvider() {
+    String projectId = System.getenv(PROJECT_ID_ENVIRONMENT_VARIABLE);
     this.translate = 
       TranslateOptions.newBuilder()
-        .setProjectId(System.getenv(PROJECT_ID_ENVIRONMENT_VARIABLE))
-        .setQuotaProjectId(System.getenv(PROJECT_ID_ENVIRONMENT_VARIABLE))
+        .setProjectId(projectId)
+        .setQuotaProjectId(projectId)
         .setTargetLanguage(DEFAULT_TARGET_LANGUAGE)
         .build()
         .getService();
