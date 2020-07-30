@@ -155,6 +155,7 @@ function fetchComments() {
   fetch('/comments/data?' + new URLSearchParams({
      limit : getCommentsLimit(),
      offset : getCommentsOffset(),
+     language : getCommentsLanguage(),
    }))
    .then(handleJSONResponse)
    .then(addCommentsToDom)
@@ -185,6 +186,13 @@ function getCommentsLimit() {
  */
 function getCommentsOffset() {
   return getCommentsLimit() * (getCurrentPage() - 1);
+}
+
+/**
+ * Returns the language selected for the comments.
+ */
+function getCommentsLanguage() {
+  return document.getElementById("comment-language").value;
 }
 
 /**
