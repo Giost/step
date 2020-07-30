@@ -26,14 +26,15 @@ import java.util.stream.Collectors;
 /** Class that allows to translate. */
 public class TranslationProvider {
   public static final String DEFAULT_TARGET_LANGUAGE = "en";
+  private static final String PROJECT_ID_ENVIRONMENT_VARIABLE = "GOOGLE_CLOUD_PROJECT";
   private Translate translate;
   private Set<String> supportedLanguageCodes;
 
   public TranslationProvider() {
     this.translate = 
       TranslateOptions.newBuilder()
-        .setProjectId("gioda-step-2020")
-        .setQuotaProjectId("gioda-step-2020")
+        .setProjectId(System.getenv(PROJECT_ID_ENVIRONMENT_VARIABLE))
+        .setQuotaProjectId(System.getenv(PROJECT_ID_ENVIRONMENT_VARIABLE))
         .setTargetLanguage(DEFAULT_TARGET_LANGUAGE)
         .build()
         .getService();
@@ -47,7 +48,7 @@ public class TranslationProvider {
 
   /**
    * Checks if the language code is supported and if not returns the default
-   * targer language, otherwise the original language code.
+   * target language, otherwise the original language code.
    */
   private String checkLanguageCode(String languageCode) {
     if (!supportedLanguageCodes.contains(languageCode.toLowerCase())) {
