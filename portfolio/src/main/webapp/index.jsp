@@ -1,3 +1,6 @@
+<%@ page import="com.google.sps.map.Map" %>
+<% String apiKey = System.getenv(Map.API_KEY_ENVIRONMENT_VARIABLE); %>
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -5,6 +8,10 @@
     <title>Stefano's Portfolio</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=<%= apiKey %>&callback=mapInit"
+      defer
+    ></script>
   </head>
   <body onload="commentsInit()">
     <div id="content">
@@ -65,6 +72,14 @@
                 <button class="change prev" onclick="previousSlide(this)">❮</button>
                 <button class="change next" onclick="nextSlide(this)">❯</button>
             </div>
+        </div>
+      </div>
+      <div id="map" class="section collapsed">
+        <div class="title" onclick="toggleDescription('map')">
+            <h2>Map</h2>
+        </div>
+        <div class="description">
+            <div id="map-container"></div>
         </div>
       </div>
       <div id="links" class="section collapsed">
