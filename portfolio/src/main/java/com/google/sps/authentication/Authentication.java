@@ -36,7 +36,7 @@ public class Authentication {
    * Returns a login URL that redirects to the index page.
    */
   public static String loginURL() {
-    return getUserService().createLoginURL("/index.html");
+    return getUserService().createLoginURL("/");
   }
 
   /**

@@ -13,6 +13,8 @@
 // limitations under the License.
 
 const DEFAULT_COMMENT_LIMIT = 5;
+const HOME_COORDS = { lat: 44.9067176, lng: 7.9096066 };
+const UNIVERSITY_COORDS = { lat: 45.0623602, lng: 7.6599514 };
 
 /**
  * Checks the validity of the parameters.
@@ -380,23 +382,30 @@ function commentsInit() {
  * Initializes the map.
  */
 function mapInit() {
-  const homeIsolabellaCoords = { lat: 44.9067176, lng: 7.9096066 };
-  const universityCoords = { lat: 45.0623602, lng: 7.6599514 };
-
-  const map = new google.maps.Map(document.getElementById("map-container"), {
-    center: homeIsolabellaCoords,
+  const mapContainer = document.getElementById("map-container");
+  const map = new google.maps.Map(mapContainer, {
+    center: HOME_COORDS,
     zoom: 10
   });
 
-  addLandmark(homeIsolabellaCoords, map, "H", "This is my hometown and where I live now.");
-  addLandmark(universityCoords, map, "U", 
-    "This is the Polytechnic of Turin, where I' m studying computer engineering.");
+  addLandmark({
+    location: HOME_COORDS,
+    map: map,
+    label: "H",
+    description: "This is my hometown and where I live now."
+  });
+  addLandmark({
+    location: UNIVERSITY_COORDS,
+    map: map,
+    label: "U",
+    description: "This is the Polytechnic of Turin, where I'm studying computer engineering."
+  });
 }
 
 /**
  * Adds a marker that shows an info window when clicked.
  */
-function addLandmark(location, map, label, description) {
+function addLandmark({location, map, label, description}) {
   const marker = new google.maps.Marker({
     position: location,
     label: label,
