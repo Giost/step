@@ -69,3 +69,8 @@
 #to-page {
   width: 5%;
 }
+
+#map-container {
+  width: 100%;
+  height: 500px;
+}
