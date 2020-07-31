@@ -390,13 +390,13 @@ function mapInit() {
 
   addLandmark({
     location: HOME_COORDS,
-    map: map,
+    map,
     label: "H",
     description: "This is my hometown and where I live now."
   });
   addLandmark({
     location: UNIVERSITY_COORDS,
-    map: map,
+    map,
     label: "U",
     description: "This is the Polytechnic of Turin, where I'm studying computer engineering."
   });
