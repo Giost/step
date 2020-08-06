@@ -14,10 +14,86 @@
 
 package com.google.sps;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.ListIterator;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    throw new UnsupportedOperationException("TODO: Implement this method.");
+    List<TimeRange> availableSlots = new ArrayList<>();
+    if (request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
+      return availableSlots;
+    }
+
+    availableSlots.add(TimeRange.WHOLE_DAY);
+    for (Event event : events) {
+      TimeRange eventTimeRange = event.getWhen();
+      Collection<String> attendees = request.getAttendees();
+      if (!containsAttendee(attendees, event)) {
+        continue;
+      }
+      ListIterator<TimeRange> availableSlotsIterator = availableSlots.listIterator();
+      while (availableSlotsIterator.hasNext()) {
+        TimeRange availableTimeRange = availableSlotsIterator.next();
+        if (!eventTimeRange.overlaps(availableTimeRange)) {
+          continue;
+        }
+        availableSlotsIterator.remove();
+        if (!eventTimeRange.contains(availableTimeRange)) {
+          if (availableTimeRange.contains(eventTimeRange)) {
+            splitRangeAvailable(availableTimeRange, eventTimeRange,
+                    availableSlotsIterator, request.getDuration());
+          } else {
+            TimeRange newTimeRange = removeEventTimeRange(availableTimeRange, eventTimeRange);
+            addListCheckDuration(availableSlotsIterator, newTimeRange, request.getDuration());
+          }
+        }
+      }
+    }
+    return availableSlots;
+  }
+
+  /**
+   * Returns true if the event contains at least one of the attendees,
+   * otherwise false.
+   */
+  private boolean containsAttendee(Collection<String> attendees, Event event) {
+    return attendees.stream()
+            .anyMatch((attendee) -> event.getAttendees().contains(attendee));
+  }
+
+  /**
+   * Returns the available time range without the overlapping time with the event time range
+   * in the cases where one time range doesn't contain the other.
+   */
+  private TimeRange removeEventTimeRange(TimeRange availableTimeRange, TimeRange eventTimeRange) {
+    int start = (availableTimeRange.start() <= eventTimeRange.start() ?
+            availableTimeRange.start() : eventTimeRange.end());
+    int end = (availableTimeRange.end() >= eventTimeRange.end() ?
+            availableTimeRange.end() : eventTimeRange.start());
+    return TimeRange.fromStartEnd(start, end, false);
+  }
+
+  /**
+   * Adds the time range to the list if its duration is greater or equal to the required duration.
+   */
+  private void addListCheckDuration(ListIterator<TimeRange> listIterator, TimeRange timeRange, long requiredDuration) {
+    if (timeRange.duration() >= requiredDuration) {
+      listIterator.add(timeRange);
+    }
+  }
+
+  /**
+   * Given an available time range that contains an event, removes the event time range and adds
+   * the two new time ranges to the list.
+   */
+  private void splitRangeAvailable(
+          TimeRange timeRangeAvailable, TimeRange timeRangeEvent,
+          ListIterator<TimeRange> listIterator, long duration) {
+    TimeRange firstSlot = TimeRange.fromStartEnd(timeRangeAvailable.start(), timeRangeEvent.start(), false);
+    TimeRange lastSlot = TimeRange.fromStartEnd(timeRangeEvent.end(), timeRangeAvailable.end(), false);
+    addListCheckDuration(listIterator, firstSlot, duration);
+    addListCheckDuration(listIterator, lastSlot, duration);
   }
 }
