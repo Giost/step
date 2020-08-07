@@ -25,33 +25,49 @@ public final class FindMeetingQuery {
     if (request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
       return availableSlots;
     }
+    List<TimeRange> availableSlotsOptional = new ArrayList<>();
 
     availableSlots.add(TimeRange.WHOLE_DAY);
+    availableSlotsOptional.add(TimeRange.WHOLE_DAY);
     for (Event event : events) {
       TimeRange eventTimeRange = event.getWhen();
-      Collection<String> attendees = request.getAttendees();
-      if (!containsAttendee(attendees, event)) {
+      boolean containsAttendee = containsAttendee(request.getAttendees(), event);
+      boolean containsOptionalAttendee = containsAttendee(request.getOptionalAttendees(), event);
+      if (!containsAttendee && !containsOptionalAttendee) {
         continue;
       }
-      ListIterator<TimeRange> availableSlotsIterator = availableSlots.listIterator();
-      while (availableSlotsIterator.hasNext()) {
-        TimeRange availableTimeRange = availableSlotsIterator.next();
-        if (!eventTimeRange.overlaps(availableTimeRange)) {
-          continue;
-        }
-        availableSlotsIterator.remove();
-        if (!eventTimeRange.contains(availableTimeRange)) {
-          if (availableTimeRange.contains(eventTimeRange)) {
-            splitRangeAvailable(availableTimeRange, eventTimeRange,
-                    availableSlotsIterator, request.getDuration());
-          } else {
-            TimeRange newTimeRange = removeEventTimeRange(availableTimeRange, eventTimeRange);
-            addListCheckDuration(availableSlotsIterator, newTimeRange, request.getDuration());
-          }
+      if (containsAttendee) {
+        removeTimeRange(availableSlots.listIterator(), eventTimeRange, request.getDuration());
+      }
+      removeTimeRange(availableSlotsOptional.listIterator(), eventTimeRange, request.getDuration());
+    }
+    if (availableSlotsOptional.size() > 0) {
+      return availableSlotsOptional;
+    }
+    return availableSlots;
+  }
+
+  /**
+   * Removes the event time range from the available slots in the list.
+   */
+  private void removeTimeRange(
+          ListIterator<TimeRange> listIterator, TimeRange eventTimeRange, long requiredDuration) {
+    while (listIterator.hasNext()) {
+      TimeRange availableTimeRange = listIterator.next();
+      if (!eventTimeRange.overlaps(availableTimeRange)) {
+        continue;
+      }
+      listIterator.remove();
+      if (!eventTimeRange.contains(availableTimeRange)) {
+        if (availableTimeRange.contains(eventTimeRange)) {
+          splitRangeAvailable(availableTimeRange, eventTimeRange,
+                  listIterator, requiredDuration);
+        } else {
+          TimeRange newTimeRange = removeEventTimeRange(availableTimeRange, eventTimeRange);
+          addListCheckDuration(listIterator, newTimeRange, requiredDuration);
         }
       }
     }
-    return availableSlots;
   }
 
   /**
@@ -89,11 +105,11 @@ public final class FindMeetingQuery {
    * the two new time ranges to the list.
    */
   private void splitRangeAvailable(
-          TimeRange timeRangeAvailable, TimeRange timeRangeEvent,
-          ListIterator<TimeRange> listIterator, long duration) {
-    TimeRange firstSlot = TimeRange.fromStartEnd(timeRangeAvailable.start(), timeRangeEvent.start(), false);
-    TimeRange lastSlot = TimeRange.fromStartEnd(timeRangeEvent.end(), timeRangeAvailable.end(), false);
-    addListCheckDuration(listIterator, firstSlot, duration);
-    addListCheckDuration(listIterator, lastSlot, duration);
+          TimeRange availableTimeRange, TimeRange eventTimeRange,
+          ListIterator<TimeRange> listIterator, long requiredDuration) {
+    TimeRange firstSlot = TimeRange.fromStartEnd(availableTimeRange.start(), eventTimeRange.start(), false);
+    TimeRange lastSlot = TimeRange.fromStartEnd(eventTimeRange.end(), availableTimeRange.end(), false);
+    addListCheckDuration(listIterator, firstSlot, requiredDuration);
+    addListCheckDuration(listIterator, lastSlot, requiredDuration);
   }
 }
