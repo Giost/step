@@ -26,20 +26,23 @@ public final class FindMeetingQuery {
       return availableSlots;
     }
     List<TimeRange> availableSlotsOptional = new ArrayList<>();
-
     availableSlots.add(TimeRange.WHOLE_DAY);
     availableSlotsOptional.add(TimeRange.WHOLE_DAY);
+
+    Collection<String> attendees = request.getAttendees();
+    Collection<String> optionalAttendees = request.getOptionalAttendees();
+    long requiredDuration = request.getDuration();
     for (Event event : events) {
       TimeRange eventTimeRange = event.getWhen();
-      boolean containsAttendee = containsAttendee(request.getAttendees(), event);
-      boolean containsOptionalAttendee = containsAttendee(request.getOptionalAttendees(), event);
+      boolean containsAttendee = containsAttendee(attendees, event);
+      boolean containsOptionalAttendee = containsAttendee(optionalAttendees, event);
       if (!containsAttendee && !containsOptionalAttendee) {
         continue;
       }
       if (containsAttendee) {
-        removeTimeRange(availableSlots.listIterator(), eventTimeRange, request.getDuration());
+        removeTimeRange(availableSlots.listIterator(), eventTimeRange, requiredDuration);
       }
-      removeTimeRange(availableSlotsOptional.listIterator(), eventTimeRange, request.getDuration());
+      removeTimeRange(availableSlotsOptional.listIterator(), eventTimeRange, requiredDuration);
     }
     if (availableSlotsOptional.size() > 0) {
       return availableSlotsOptional;
